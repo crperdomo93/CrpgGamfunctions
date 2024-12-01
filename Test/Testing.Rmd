@@ -1,0 +1,60 @@
+---
+title: "GAM Function Tests"
+author: "Cristian Perdomo"
+date: "2024-11-20"
+output: html_document
+---
+
+```{r setup and librarys, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = T, message = F, fig.align = "center")
+library(mgcv)
+library(grid)
+library(gridExtra)
+library(readr)
+library(readxl)
+```
+
+```{r, load data and functions}
+d.data <- read.csv("C:\\Users\\crper\\Documents\\R\\CrpgGamfunctions\\Data\\data.csv", 
+                   colClasses = c("Stnumber" = "factor", "Impacted" = "factor"))
+source("R/plotgraf.R")
+source("R/plotDiff.R")
+source("R/plotIntra.R")
+
+```
+
+# Ajustes
+
+```{r}
+m <- gam(DO ~ Impacted +  s(Year, bs="ps")+ s(Year, by=Impacted, bs="ps")+
+          s(Year,Stnumber, bs="fs"),
+          method = "REML" , data= d.data)
+```
+
+```{r}
+graph_Adjusted <- plotgraf(modelo = m, 
+                exclude = "s(Year,Stnumber)",
+                varX = "Year",
+                ylab = "ylab",
+                legenTitle = "Legend Title",
+                name = "Plot name")
+
+```
+
+```{r}
+graph_diff <- plotDiff(modelo = m, variable = "DO", name = "Diff", exclude = "s(Year,Stnumber)")
+```
+
+
+```{r}
+graph_Intra = plotIntra(modelo = m,x0 = 1990, name = "Diff")
+```
+
+
+
+
+
+
+
+
+
